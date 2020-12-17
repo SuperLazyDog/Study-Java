@@ -25,12 +25,13 @@ class IO {
     // for(String s : a ) {
     //   System.out.println(s);
     // }
-    Dummy test = new Dummy();
-    // test.test1();
-    System.out.printf("my num: %e\n", 1.2);
-    System.out.printf("%tp\n", new Date());
-    System.out.printf("%(d\n", -1);
-    System.out.printf("%020.5f xxx\n", 12345678.123456);
+    // Dummy test = new Dummy();
+    // // test.test1();
+    // System.out.printf("my num: %e\n", 1.2);
+    // System.out.printf("%tp\n", new Date());
+    // System.out.printf("%(d\n", -1);
+    // System.out.printf("%020.5f xxx\n", 12345678.123456);
+    System.out.println("a: {}\n", 1);
   }
 }
 
