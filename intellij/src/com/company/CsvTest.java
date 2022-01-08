@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.util.Random;
+import java.time.Instant;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -13,10 +14,31 @@ import org.apache.commons.csv.CSVPrinter;
 
 public class CsvTest {
     public final int ROW_NUMBER = 10;
+    public final CSVFormat DEFAULT_FORMAT = CSVFormat.DEFAULT.withNullString("\\N");
     void test1() {
-        String fileName = get_csv_file("dummy");
-        generate_data(fileName, true);
-        readData(fileName);
+        String filename = get_csv_file("null_test");
+        generate_data(filename, true);
+        readData(filename);
+//        String fileName = get_csv_file("dummy");
+//        generate_data(fileName, true);
+//        readData(fileName);
+//        read_null();
+        System.out.println(null_time());
+
+        System.out.println(stringToValue("123", Float.class));
+    }
+
+    void read_null() {
+        Integer i = null;
+        System.out.println(i);
+    }
+
+    void null_test(Integer i) {
+        System.out.println(i);
+    }
+
+    Instant null_time() {
+        return (Instant)null;
     }
 
     protected String get_csv_file(String filename) {
@@ -71,13 +93,16 @@ public class CsvTest {
 
     protected void generate_data(String filepath, boolean byCommonsCsv) {
         if (byCommonsCsv) {
-            try(CSVPrinter p = new CSVPrinter(new FileWriter(filepath), CSVFormat.DEFAULT)) {
+            try(CSVPrinter p = new CSVPrinter(new FileWriter(filepath), DEFAULT_FORMAT)) {
                 Random random = new Random();
+//                for (int i = 0; i < ROW_NUMBER; i++) {
+//                    boolean bool = random.nextBoolean();
+//                    String str = "string,,,"+i;
+//                    double d = random.nextDouble();
+//                    p.printRecord(bool, i, d, str);
+//                }
                 for (int i = 0; i < ROW_NUMBER; i++) {
-                    boolean bool = random.nextBoolean();
-                    String str = "string,,,"+i;
-                    double d = random.nextDouble();
-                    p.printRecord(bool, i, d, str);
+                    p.printRecord("", null);
                 }
             } catch (Exception e) {
                 System.err.println(e);
@@ -88,14 +113,19 @@ public class CsvTest {
     }
 
     protected void readData(String filepath) {
-        try(CSVParser parser = CSVParser.parse(new FileReader(filepath), CSVFormat.DEFAULT)) {
+        try(CSVParser parser = CSVParser.parse(new FileReader(filepath), DEFAULT_FORMAT)) {
             for (CSVRecord r : parser) {
                 StringBuilder sb = new StringBuilder();
                 int size = r.size();
                 System.out.printf("size: %d\n", size);
                 for (int i = 0; i < size; i++) {
-                    sb.append(r.get(i));
-                    System.out.println(r.get(i).getClass());
+                    String value = r.get(i);
+                    sb.append(value);
+                    if (value != null) {
+                        System.out.println(r.get(i).getClass());
+                    } else {
+                        System.out.println("null");
+                    }
                     if (i + 1 < size) {
                         sb.append(',');
                     }
@@ -106,5 +136,16 @@ public class CsvTest {
         } catch (Exception e) {
             System.err.println(e);
         }
+    }
+
+    private  Object stringToValue(String origin, Class<?> obj) {
+        if (obj == Boolean.class) {
+            return Boolean.valueOf(origin);
+        } else if (obj == Double.class) {
+            return Double.valueOf(origin);
+        } else if (obj == Float.class) {
+            return Float.valueOf(origin);
+        }
+        return origin;
     }
 }
